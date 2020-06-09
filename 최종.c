@@ -282,7 +282,7 @@ int main(int argc, char* argv[])
         fwrite(&temp_len, 1, 1, fp2);
         fwrite(&friend_list[i].name, sizeof(char), temp_len, fp2);
 
-        if (friend_list[i].gender == "MALE") temp_len = 0;
+        if (!strcmp(friend_list[i].gender,"MALE")) temp_len = 0;
         else temp_len = 1;
         fwrite(&temp_len, 1, 1, fp2);
 
