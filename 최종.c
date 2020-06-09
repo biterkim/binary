@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
 
     fgets(buf, sizeof(buf), fp);
     fgets(buf, sizeof(buf), fp);
-    int itemNum;
+    int itemNum[6] = { 0 };
     while (fgets(buf, sizeof(buf), fp))
     {
         if (buf[0] != '\n')
@@ -221,12 +221,12 @@ int main(int argc, char* argv[])
             strcpy(itemName, buf);
             strcpy(itemName, passing2(itemName));
             item_count++;
-            itemNum = changeItemNum(itemList, itemName);
+            itemNum[item_count-1] = changeItemNum(itemList, itemName);
             temp = pasing(buf);
             temp_len = strlen(temp);
-            item[item_count - 1] = (char*)malloc(sizeof(char) * temp_len);
-            strcpy(item[item_count - 1], temp);
-            itemList[itemNum].cnt = atoi(temp);
+            //item[item_count - 1] = (char*)malloc(sizeof(char) * temp_len);
+            //strcpy(item[item_count - 1], temp);
+            itemList[itemNum[item_count-1]].cnt = atoi(temp);
         }
         else
         {
@@ -234,8 +234,9 @@ int main(int argc, char* argv[])
         }
     }
     fwrite(&item_count, 1, 1, fp2);
-    for (int i = 0; i < 6; i++) {
-        temp_len = itemList[i].cnt;
+    for (int i = 0; i < item_count; i++) {
+        temp_len = itemList[itemNum[i]].cnt;        
+        fwrite(&itemNum[i], 1, 1, fp2);
         fwrite(&temp_len, 1, 1, fp2);
     }
 
@@ -321,13 +322,13 @@ int main(int argc, char* argv[])
                         fwrite("*", 1, 1, fp2);
                         fwrite(&buf[i], 1, 1, fp2);
                         fwrite(&text_count, 1, 1, fp2);
-                        fwrite("\n", 1, 1, fp2);
                         //sprintf(temp, "%s*%c%x", temp, buf[i], text_count);
                         //strcat(re2, "*"+re1[i]+text_count);
                         text_count = 1;
                     }
                 }
             }
+            fwrite("\n", 1, 1, fp2);
             strcat(descript, "\n");
         }
         else
@@ -351,8 +352,8 @@ int main(int argc, char* argv[])
     printf("%s\n", mp);
     printf("%s\n", coin);
 
-    for (int i = 0; i < 6; i++) 
-        printf("%s %d\n", itemList[i].itemName, itemList[i].cnt);
+    for (int i = 0; i < item_count; i++) 
+        printf("%s %d\n", itemList[itemNum[i]].itemName, itemList[itemNum[i]].cnt);
 
 
     for (int i = 0; i < friend_count; i++)
