@@ -189,14 +189,18 @@ int main(int argc, char* argv[])
 			temp_len = strlen(temp);
 			item[item_count - 1] = (char*)malloc(sizeof(char) * temp_len);
 			strcpy(item[item_count - 1], temp);
-			temp_len = atoi(item[item_count - 1]);
-			fwrite(&temp_len, 1, 1, fp2);
 		}
 		else
 		{
 			break;
 		}
 	}
+	fwrite(&item_count, 1, 1, fp2);
+	for (int i = 0; i < item_count; i++) {
+		temp_len = atoi(item[i]);
+		fwrite(&temp_len, 1, 1, fp2);
+	}
+		
 	fgets(buf, sizeof(buf), fp);
 
 	while (fgets(buf, sizeof(buf), fp))
@@ -207,29 +211,18 @@ int main(int argc, char* argv[])
 
 			temp = pasing(buf);
 			strcpy(friend_list[friend_count - 1].id, temp);
-			temp_len = strlen(friend_list[friend_count - 1].id);
-			fwrite(&temp_len, 1, 1, fp2);
-			fwrite(&friend_list[friend_count - 1].id, sizeof(char), temp_len, fp2);
 			fgets(buf, sizeof(buf), fp);
 
 			temp = pasing(buf);
 			strcpy(friend_list[friend_count - 1].name, temp);
-			temp_len = strlen(friend_list[friend_count - 1].name);
-			fwrite(&temp_len, 1, 1, fp2);
-			fwrite(&friend_list[friend_count - 1].name, sizeof(char), temp_len, fp2);
 			fgets(buf, sizeof(buf), fp);
 
 			temp = pasing(buf);
 			strcpy(friend_list[friend_count - 1].gender, temp);
-			if (friend_list[friend_count - 1].gender == "MALE") temp_len = 0;
-			else temp_len = 1;
-			fwrite(&temp_len, 1, 1, fp2);
 			fgets(buf, sizeof(buf), fp);
 
 			temp = pasing(buf);
 			strcpy(friend_list[friend_count - 1].age, temp);
-			temp_len = atoi(friend_list[friend_count - 1].age);
-			fwrite(&temp_len, 1, 1, fp2);
 
 			fgets(buf, sizeof(buf), fp);
 		}
@@ -237,6 +230,25 @@ int main(int argc, char* argv[])
 		{
 			break;
 		}
+	}
+
+	fwrite(&friend_count, 1, 1, fp2);
+
+	for (int i = 0; i < friend_count; i++) {
+		temp_len = strlen(friend_list[i].id);
+		fwrite(&temp_len, 1, 1, fp2);
+		fwrite(&friend_list[i].id, sizeof(char), temp_len, fp2);
+
+		temp_len = strlen(friend_list[i].name);
+		fwrite(&temp_len, 1, 1, fp2);
+		fwrite(&friend_list[i].name, sizeof(char), temp_len, fp2);
+
+		if (friend_list[i].gender == "MALE") temp_len = 0;
+		else temp_len = 1;
+		fwrite(&temp_len, 1, 1, fp2);
+
+		temp_len = atoi(friend_list[i].age);
+		fwrite(&temp_len, 1, 1, fp2);
 	}
 
 	strcpy(descript, "");
