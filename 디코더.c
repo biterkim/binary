@@ -89,11 +89,7 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "파일 오류\n");
 		return 0;
 	}
-	fp2 = fopen("test3_sample.txt", "w+b");
-	if (fp == NULL) {
-		fprintf(stderr, "파일 오류\n");
-		return 0;
-	}
+	
 
 	fread(&temp_len, 1, 1, fp);
 	fread(&id, 1, temp_len, fp);
@@ -135,7 +131,11 @@ int main(int argc, char* argv[])
 	fclose(fp);
 
 
-
+	fp2 = fopen("test3_sample.txt", "w+b");
+	if (fp == NULL) {
+		fprintf(stderr, "파일 오류\n");
+		return 0;
+	}
 	fclose(fp2);
 
 	printf("%s\n", id);
