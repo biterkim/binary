@@ -29,6 +29,7 @@ int changeItemNum(items* itemList, const char* itemName) {
 	return itemList[i].itemNum;
 }
 
+
 typedef struct _friend {
 	char id[255];
 	char name[255];
