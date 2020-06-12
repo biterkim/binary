@@ -60,9 +60,9 @@ char* calculateCRC(char* crcdata, int len) {	//CRC-16-CCITT(xmodem)
         crcdata++;
         for (j = 0; j < 8; j++) {
             if (crc & 0x8000) {
-                crc = (crc << 1) ^ 0x1021;   //Á¤¹æÇâ 0x1021 0001 0000 0010 0000
+                crc = (crc << 1) ^ 0x1021;   //ì •ë°©í–¥ 0x1021 0001 0000 0010 0000
             }
-            else {                            //¿ª¹æÇâ 0x8408 1000 0100 0000 1000
+            else {                            //ì—­ë°©í–¥ 0x8408 1000 0100 0000 1000
                 crc = crc << 1;
             }
         }
@@ -93,7 +93,7 @@ int changeItemNum(items* itemList, const char* itemName) {
             continue;
         }
     }
-    printf("°ªÀÌ ¾ø½À´Ï´Ù.\n");
+    printf("ê°’ì´ ì—†ìŠµë‹ˆë‹¤.\n");
     exit(1);
     return itemList[i].itemNum;
 }
@@ -158,18 +158,18 @@ int main(int argc, char* argv[])
     int temp_len = 0;
     int item_count = 0, friend_count = 0, text_count = 1;
     char descript[1000];
-    FILE* fp, * fp2; //ÆÄÀÏ µğ½ºÅ©¸³ÅÍ, fp2´Â ¼öÁ¤¿ë ÀÓ½Ã ÆÄÀÏÁ¦ÀÛ
+    FILE* fp, * fp2; //íŒŒì¼ ë””ìŠ¤í¬ë¦½í„°, fp2ëŠ” ìˆ˜ì •ìš© ì„ì‹œ íŒŒì¼ì œì‘
 
     char buf[600];
 
     fp = fopen("test1_sample.txt", "r+b");
     if (fp == NULL) {
-        fprintf(stderr, "ÆÄÀÏ ¿À·ù\n");
+        fprintf(stderr, "íŒŒì¼ ì˜¤ë¥˜\n");
         return 0;
     }
     fp2 = fopen("test2_sample.txt", "w+b");
     if (fp == NULL) {
-        fprintf(stderr, "ÆÄÀÏ ¿À·ù\n");
+        fprintf(stderr, "íŒŒì¼ ì˜¤ë¥˜\n");
         return 0;
     }
 
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
     strcpy(id, pasing(buf));
     temp_len = strlen(id);
     if (temp_len > 255) {
-        printf("ID¼ö°¡ 255ÀÌ»óÀÔ´Ï´Ù.\n");
+        printf("IDìˆ˜ê°€ 255ì´ìƒì…ë‹ˆë‹¤.\n");
         exit(1);
     }
     fwrite(&temp_len, 1, 1, fp2);
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
     strcpy(name, pasing(buf));
     temp_len = strlen(name);
     if (temp_len > 255) {
-        printf("ID¼ö°¡ 255ÀÌ»óÀÔ´Ï´Ù.\n");
+        printf("NAMEìˆ˜ê°€ 255ì´ìƒì…ë‹ˆë‹¤.\n");
         exit(1);
     }
     fwrite(&temp_len, 1, 1, fp2);
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
     strcpy(age, pasing(buf));
     temp_len = atoi(age);
     if (temp_len < 0 || temp_len>99) {
-        printf("³ªÀÌ°¡ 0~99ÀÌ¿ÜÀÇ °ªÀÔ´Ï´Ù!!\n");
+        printf("ë‚˜ì´ê°€ 0~99ì´ì™¸ì˜ ê°’ì…ë‹ˆë‹¤!!\n");
         exit(1);
     }
     fwrite(&temp_len, 1, 1, fp2);
@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
     strcpy(hp, pasing(buf));
     temp_len = atoi(hp);
     if (temp_len < 0 || temp_len>255) {
-        printf("HP°¡ 0~255ÀÌ¿ÜÀÇ °ªÀÔ´Ï´Ù!!\n");
+        printf("HPê°€ 0~255ì´ì™¸ì˜ ê°’ì…ë‹ˆë‹¤!!\n");
         exit(1);
     }
     fwrite(&temp_len, 1, 1, fp2);
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
     strcpy(mp, pasing(buf));
     temp_len = atoi(mp);
     if (temp_len < 0 || temp_len>255) {
-        printf("MP°¡ 0~255ÀÌ¿ÜÀÇ °ªÀÔ´Ï´Ù!!\n");
+        printf("MPê°€ 0~255ì´ì™¸ì˜ ê°’ì…ë‹ˆë‹¤!!\n");
         exit(1);
     }
     fwrite(&temp_len, 1, 1, fp2);
@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
     strcpy(coin, pasing(buf));
     temp_len = atoi(coin);
     if (temp_len < 0 || temp_len>65535) {
-        printf("COINÀÌ 0~65535 ÀÌ¿ÜÀÇ °ªÀÔ´Ï´Ù!!\n");
+        printf("COINì´ 0~65535 ì´ì™¸ì˜ ê°’ì…ë‹ˆë‹¤!!\n");
         exit(1);
     }
     fwrite(&temp_len, 2, 1, fp2);
@@ -260,11 +260,20 @@ int main(int argc, char* argv[])
             temp = pasing(buf);
             temp_len = strlen(temp);
             itemList[itemNum[item_count - 1]].cnt = atoi(temp);
+            
         }
         else
         {
             break;
         }
+    }
+    int item_count_test = 0;
+    for (int i = 0; i < 6; i++) {
+        item_count_test += itemList[i].cnt;
+    }
+    if (item_count > 255) {
+        printf("item ê°¯ìˆ˜ê°€ 255ê°œ ì´ˆê³¼ì…ë‹ˆë‹¤.\n");
+        exit(1);
     }
     fwrite(&item_count, 1, 1, fp2);
     for (int i = 0; i < item_count; i++) {
@@ -317,7 +326,10 @@ int main(int argc, char* argv[])
     }
 
     fwrite(&friend_count, 1, 1, fp2);
-
+    if (friend_count > 100) {
+        printf("ì¹œêµ¬ê°€ 100ëª… ì´ˆê³¼ ì…ë‹ˆë‹¤.\n");
+        exit(1);
+    }
     for (int i = 0; i < friend_count; i++) {
         temp_len = strlen(friend_list[i].id);
         fwrite(&temp_len, 1, 1, fp2);
@@ -387,6 +399,10 @@ int main(int argc, char* argv[])
         {
             break;
         }
+    }
+    if ((int)strlen(section) > 1000) {
+        printf("descript ê¸¸ì´ê°€ 1000ì ì´ˆê³¼ì…ë‹ˆë‹¤.\n");
+        exit(1);
     }
     crc = calculateCRC(section, strlen(section));
     fwrite(&crc, 2, 1, fp2);
