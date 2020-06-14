@@ -198,8 +198,8 @@ int main(int argc, char* argv[])
     fgets(buf, sizeof(buf), fp);
     strcpy(gender, pasing(buf));
     if (gender == "MALE") gender_i = 0;
-    else gender_i = 1;
-    fwrite(&gender_i, 1, 1, fp2);
+    else gender_i = 100;
+    //fwrite(&gender_i, 1, 1, fp2);
 
     fgets(buf, sizeof(buf), fp);
     strcpy(age, pasing(buf));
@@ -208,6 +208,7 @@ int main(int argc, char* argv[])
         printf("나이가 0~99이외의 값입니다!!\n");
         exit(1);
     }
+    temp_len += gender_i;
     fwrite(&temp_len, 1, 1, fp2);
 
     fgets(buf, sizeof(buf), fp);
