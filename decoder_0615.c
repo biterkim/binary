@@ -123,6 +123,7 @@ int main(int argc, char* argv[])
 	unsigned short crc;
 	unsigned short crc_c[4];
 	int temp_len = 0;
+	int iserr = 0, err_code = 0;
 	int item_count = 0, friend_count = 0, text_count = 1;
 
 	FILE* fp, * fp2; //파일 디스크립터, fp2는 수정용 임시 파일제작
@@ -166,8 +167,13 @@ int main(int argc, char* argv[])
 	fread(&crc_c[1], 2, 1, fp);
 	fread(&crc_c[2], 2, 1, fp);
 	fread(&crc_c[3], 2, 1, fp);
-	if (crc_check(crc, crc_c)) {
-		printf("*USER STATUS* error\n");
+	err_code = crc_check(crc, crc_c);
+	if (err_code) {
+		iserr++;
+		if(err_code ==1)
+			printf("*USER STATUS* 데이터 변조됨.\n");
+		else
+			printf("*USER STATUS* crc 변조됨.\n");
 	}
 	
 
@@ -191,8 +197,13 @@ int main(int argc, char* argv[])
 	fread(&crc_c[1], 2, 1, fp);
 	fread(&crc_c[2], 2, 1, fp);
 	fread(&crc_c[3], 2, 1, fp);
-	if (crc_check(crc, crc_c)) {
-		printf("*ITEMS* error\n");
+	err_code = crc_check(crc, crc_c);
+	if (err_code) {
+		iserr++;
+		if (err_code == 1)
+			printf("*ITEMS* 데이터 변조됨.\n");
+		else
+			printf("*ITEMS* crc 변조됨.\n");
 	}
 
 
@@ -234,8 +245,13 @@ int main(int argc, char* argv[])
 	fread(&crc_c[1], 2, 1, fp);
 	fread(&crc_c[2], 2, 1, fp);
 	fread(&crc_c[3], 2, 1, fp);
-	if (crc_check(crc, crc_c)) {
-		printf("*FRIENDS LIST* error\n");
+	err_code = crc_check(crc, crc_c);
+	if (err_code) {
+		iserr++;
+		if (err_code == 1)
+			printf("*FRIENDS LIST* 데이터 변조됨.\n");
+		else
+			printf("*FRIENDS LIST* crc 변조됨.\n");
 	}
 	
 	//sprintf(descript,"");
@@ -251,11 +267,18 @@ int main(int argc, char* argv[])
 	fread(descript, 1, n2-n1, fp);
 	strcpy(user->descript, text_decode(descript));
 	crc = calculateCRC(user->descript, strlen(user->descript));	
-	if (crc_check(crc, crc_c)) {
-		printf("*DESCRIPTION* error\n");
+	err_code = crc_check(crc, crc_c);
+	if (err_code) {
+		iserr++;
+		if (err_code == 1)
+			printf("*DESCRIPTION* 데이터 변조됨.\n");
+		else
+			printf("*DESCRIPTION* crc 변조됨.\n");
 	}
 	fclose(fp);
 
+	if (iserr)
+		exit(1);
 
 	fp2 = fopen("result.txt", "w+b");
 	if (fp == NULL) {
