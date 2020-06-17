@@ -1,8 +1,4 @@
-﻿#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
-#include<stdio.h>
+﻿#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 
@@ -334,9 +330,7 @@ int main(int argc, char* argv[])
     crc = calculateCRC(section, strlen(section));
     fwrite(&crc, 2, 1, fp2);
     fwrite(&crc, 2, 1, fp2);
-
-
-    int descript_count = 0;
+        
     section = (char*)malloc(sizeof(char) * 1000);
     strcpy(descript, "");
     strcpy(section, "");
@@ -344,12 +338,11 @@ int main(int argc, char* argv[])
     {
         sprintf(section, "%s%s", section, buf);
         if (buf[0] != '\n')
-        {
-            descript_count++;
+        {            
             temp_len = strlen(buf);
             for (int i = 0; i < temp_len; i++)
             {
-                if (buf[i] == buf[i + 1])   text_count++;
+                if (buf[i] == buf[i + 1])  text_count++; 
                 else
                 {
                     if (text_count == 1)
@@ -378,11 +371,12 @@ int main(int argc, char* argv[])
         printf("descript 길이가 1000자 초과입니다.\n");
         exit(1);
     }
+    unsigned short descript_len = strlen(descript);
     for (int k = 0; k < 3; k++) {
-        fwrite(&descript_count, 1, 1, fp2);
+        fwrite(&descript_len, 1, 2, fp2);
         fwrite(&descript, 1, strlen(descript), fp2);
     }
-    sprintf(section, "%d%s", descript_count, descript);
+    sprintf(section, "%d%s", descript_len, descript);
     crc = calculateCRC(section, strlen(section));
     fwrite(&crc, 2, 1, fp2);
     fwrite(&crc, 2, 1, fp2);
