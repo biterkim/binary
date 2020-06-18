@@ -184,7 +184,7 @@ int main() {
 
 	char buf[1000];
 
-	fp = fopen("test2_sample.txt", "r+b");
+	fp = fopen(argv[1], "r+b");
 	if (fp == NULL) {
 		fprintf(stderr, "파일 오류\n");
 		return 0;
@@ -443,7 +443,7 @@ int main() {
 		}			
 	}
 
-	fp2 = fopen("result.txt", "w+b");
+	fp2 = fopen(argv[2], "w+b");
 	if (fp == NULL) {
 		fprintf(stderr, "파일 오류\n");
 		return 0;
