@@ -196,8 +196,8 @@ int main(int argc, char* argv[])
     FILE* fp, * fp2; //파일 디스크립터, fp2는 수정용 임시 파일제작
 
     char buf[600];
-	fp = file_open("test1_sample.txt", "r+b");
-    fp2 = file_open("test2_sample.txt", "w+b");
+	fp = file_open(argv[1], "r+b");
+    fp2 = file_open(argv[2], "w+b");
 
     fgets(buf, sizeof(buf), fp);
 	fgets(buf, sizeof(buf), fp);
