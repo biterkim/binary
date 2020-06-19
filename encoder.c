@@ -141,13 +141,18 @@ int main(int argc, char* argv[])
     FILE* fp, * fp2; //파일 디스크립터, fp2는 수정용 임시 파일제작
 
     char buf[600];
+    
+    if(argc == 1){
+        printf("usage) %s sample_file encode_file\n", argv[0]);
+        exit(1);
+    }
 
-    fp = fopen("test1_sample.txt", "r+b");
+    fp = fopen(argv[1], "r+b");
     if (fp == NULL) {
         fprintf(stderr, "파일 오류\n");
         return 0;
     }
-    fp2 = fopen("test2_sample.txt", "w+b");
+    fp2 = fopen(argv[2], "w+b");
     if (fp == NULL) {
         fprintf(stderr, "파일 오류\n");
         return 0;
