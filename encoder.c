@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 
     char buf[600];
     
-    if(argc == 1){
+    if(argc != 3){
         printf("usage) %s sample_file encode_file\n", argv[0]);
         exit(1);
     }

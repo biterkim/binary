@@ -184,7 +184,7 @@ int main(int argc, char* argv[]) {
 
 	char buf[1000];
 	
-	if(argc == 1){
+	if(argc != 3){
         	printf("usage) %s encode_file result_file\n", argv[0]);
         	exit(1);
     	}
