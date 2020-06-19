@@ -504,5 +504,10 @@ int main() {
 	}
 	printf("%s", text_decode(section4[r_data[3].real_data]->descript));
 
+	for(int i = 0; i<3;i++){
+	free(section1[i]);
+	free(section2[i]);
+	free(section3[i]);
+	}
 	return 0;
 }
