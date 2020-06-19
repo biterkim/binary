@@ -200,9 +200,14 @@ int main(int argc, char* argv[])
 	if (fp == NULL)
 	{ 
             printf("파일 읽기 오류");
-            return -1;
+            return 0;
          }
     fp2 = file_open(argv[2], "w+b");
+	if (fp == NULL)
+	{ 
+            printf("파일 읽기 오류");
+            return 0;
+         }
 
     fgets(buf, sizeof(buf), fp);
 	fgets(buf, sizeof(buf), fp);
