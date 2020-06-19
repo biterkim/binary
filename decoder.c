@@ -153,7 +153,7 @@ typedef struct _real_data {
 	int error_data[2];
 }real_data;
 
-int main() {
+int main(int argc, char* argv[]) {
 	Section1* section1[3];
 	for (int i = 0; i < 3; i++) section1[i] = (Section1*)malloc(sizeof(Section1));
 
@@ -306,7 +306,9 @@ int main() {
 	}
 	crc_check_s check = { 0 };
 	real_data r_data[4] = { 0 };
-	for (int i = 0; i < 4; i++) {
+	printf("crc 확인.\n\n");
+	printf("원본0 원본1 원본2 crc1  crc2\n");
+	for (int i = 0; i < 4; i++) {				
 		printf("%d %d %d %d %d ", crc_c[i]->crc[0], crc_c[i]->crc[1], crc_c[i]->crc[2], crc_c[i]->crc_c[0], crc_c[i]->crc_c[1]);
 		check = crc_check(crc_c[i]->crc, crc_c[i]->crc_c);
 		if (check.success_count == 5)
@@ -482,7 +484,9 @@ int main() {
 	fprintf(fp2, "%s", text_decode(section4[r_data[3].real_data]->descript));
 
 	fclose(fp2);
-
+	
+	printf("디코딩 완료.\n");
+	/*
 	printf("%s\n", section1[r_data[0].real_data]->id);
 	printf("%s\n", section1[r_data[0].real_data]->name);
 	printf("%d\n", section1[r_data[0].real_data]->gender_i);
@@ -503,7 +507,8 @@ int main() {
 		printf("%d\n", section3[r_data[2].real_data]->friend_list[i].age);
 	}
 	printf("%s", text_decode(section4[r_data[3].real_data]->descript));
-
+	*/
+	
 	for(int i = 0; i<3;i++){
 	free(section1[i]);
 	free(section2[i]);

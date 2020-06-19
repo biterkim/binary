@@ -419,7 +419,10 @@ int main(int argc, char* argv[])
     fclose(fp);
     fclose(fp2);
 
+	printf("인코딩 된 데이터 확인.\n");
 	print_all(info, item_count, itemNum, itemList, friend_count, friend_list);
+	printf("인코딩 완료.\n");
+	
 	free(itemList);
 	free(friend_list);
 	free(info);
