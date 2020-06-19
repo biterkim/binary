@@ -183,6 +183,11 @@ int main(int argc, char* argv[]) {
 	FILE* fp, * fp2; //파일 디스크립터, fp2는 수정용 임시 파일제작
 
 	char buf[1000];
+	
+	if(argc == 1){
+        	printf("usage) %s encode_file result_file\n", argv[0]);
+        	exit(1);
+    	}
 
 	fp = fopen(argv[1], "r+b");
 	if (fp == NULL) {
