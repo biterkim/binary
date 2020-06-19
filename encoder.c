@@ -2,51 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-//char GetCRC8(char crc, char ch)
-//{
-//    int i;
-//
-//    for (i = 0; i < 8; i++) {
-//        if (crc & 0x80) {
-//            crc <<= 1;
-//            if (ch & 0x80) {
-//                crc = crc | 0x01;
-//            }
-//            else {
-//                crc = crc & 0xfe;
-//            }
-//            crc = crc ^ 0x107;
-//        }
-//        else {
-//            crc <<= 1;
-//            if (ch & 0x80) {
-//                crc = crc | 0x01;
-//            }
-//            else {
-//                crc = crc & 0xfe;
-//            }
-//        }
-//        ch <<= 1;
-//    }
-//    return (crc);
-//}
-//
-//char crc_8(char* source, int number)
-//{
-//    int i;
-//
-//    char crc = 0;
-//
-//    for (i = 0; i < number; i++) {
-//        crc = GetCRC8(crc, *source);
-//        source++;
-//    }
-//
-//    crc = GetCRC8(crc, 0x00);
-//
-//    return crc;
-//}
-
+//crc-16 계산
 char* calculateCRC(char* crcdata, int len) {	//CRC-16-CCITT(xmodem)
     int i, j;
     unsigned short crc = 0;
@@ -66,39 +22,6 @@ char* calculateCRC(char* crcdata, int len) {	//CRC-16-CCITT(xmodem)
     return (char*)crc;
 
 }
-
-typedef struct _item {
-    char itemName[255];
-    int cnt;
-    int itemNum;
-} items;
-
-items itemList[6] = { {"BOMB",0,0},{"POTION",0,1},{"CURE",0,2},{"BOOK",0,3}, {"SHIELD",0,4}, {"CANNON",0,5} };
-
-int changeItemNum(items* itemList, const char* itemName) {
-    int i = 0;
-
-    while (i < 6) {
-        int value = strcmp(itemList[i].itemName, itemName);
-        if (value == 0) {
-            return itemList[i].itemNum;
-        }
-        else {
-            i++;
-            continue;
-        }
-    }
-    printf("값이 없습니다.\n");
-    exit(1);
-    return itemList[i].itemNum;
-}
-
-typedef struct _friend {
-    char id[255];
-    char name[255];
-    char gender[50];
-    char age[50];
-} friends;
 
 char* text_encode(char* p1)
 {
@@ -127,22 +50,154 @@ char* text_encode(char* p1)
     return re2;
 }
 
+// user 정보 구조체
+typedef struct _Info {
+	char id[255], name[255], gender[50], age[50], hp[50], mp[50], coin[50];
+	char descript[1000];
+}Info;
+
+//친구 구조체
+typedef struct _friend {
+	char id[255];
+	char name[255];
+	char gender[50];
+	char age[50];
+} friends;
+
+// 친구 구조체 초기화
+friends* init_friends() {
+	friends* friend_list = (friends*)malloc(sizeof(friends) * 100);
+	return friend_list;
+}
+
+//item 구조체
+typedef struct _item {
+	char itemName[255];
+	int cnt;
+	int itemNum;
+} items;
+//item 번호 변환
+int changeItemNum(items* itemList, const char* itemName) {
+	int i = 0;
+
+	while (i < 6) {
+		int value = strcmp(itemList[i].itemName, itemName);
+		if (value == 0) {
+			return itemList[i].itemNum;
+		}
+		else {
+			i++;
+			continue;
+		}
+	}
+	printf("값이 없습니다.\n");
+	exit(1);
+	return itemList[i].itemNum;
+}
+
+// 아이템 구조체 초기화
+items* init_itemList() {
+	items* itemList = (items*)malloc(sizeof(items) * 6);
+	strcpy(itemList[0].itemName, "BOMB");
+	itemList[0].itemNum = 0;
+	itemList[0].cnt = 0;
+
+	strcpy(itemList[1].itemName, "POTION");
+	itemList[1].itemNum = 1;
+	itemList[1].cnt = 0;
+
+	strcpy(itemList[2].itemName, "CURE");
+	itemList[2].itemNum = 2;
+	itemList[2].cnt = 0;
+
+	strcpy(itemList[3].itemName, "BOOK");
+	itemList[3].itemNum = 3;
+	itemList[3].cnt = 0;
+
+	strcpy(itemList[4].itemName, "SHIELD");
+	itemList[4].itemNum = 4;
+	itemList[4].cnt = 0;
+
+	strcpy(itemList[5].itemName, "CANNON");
+	itemList[5].itemNum = 5;
+	itemList[5].cnt = 0;
+
+	return itemList;
+}
+
+//파일 불러오기
+FILE* file_open(const char* fileName,const char* rwa) {
+	FILE* fp = fopen(fileName, rwa);
+	if (fp == NULL) {
+		fprintf(stderr, "파일 오류\n");
+		exit(1);
+	}
+	return fp;
+}
+
+// 글자수 예외처리
+void check_strlen(const char*kind,const char* str,int count) {
+	if (strlen(str) > count) {
+		printf("%s의 글자수가 %d자를 넘었습니다.[%d글자]\n",kind,count,strlen(str));
+		exit(1);
+	}
+}
+// 숫자 예외처리
+void check_int(const char*kind, const char* str, int count) {
+	if (atoi(str) < 0 || atoi(str) > count) {
+		printf("%s가 0~%d이외의 값입니다!!\n",kind,count);
+		exit(1);
+	}
+}
+void check_int2(const char*kind, int what, int count) {
+	if (what < 0 || what > count) {
+		printf("%s가 %d명을 초과 했습니다!!\n", kind, count);
+		exit(1);
+	}
+}
+
+//전체 출력
+void print_all(Info* info, int item_count, int itemNum[6], items* itemList,int friend_count ,friends*friend_list) {
+	printf("%s\n", info->id);
+	printf("%s\n", info->name);
+	printf("%s\n", info->gender);
+	printf("%s\n", info->age);
+	printf("%s\n", info->hp);
+	printf("%s\n", info->mp);
+	printf("%s\n", info->coin);
+
+	for (int i = 0; i < item_count; i++)
+		printf("%s %d\n", itemList[itemNum[i]].itemName, itemList[itemNum[i]].cnt);
+
+
+	for (int i = 0; i < friend_count; i++)
+	{
+		printf("%s\n", friend_list[i].id);
+		printf("%s\n", friend_list[i].name);
+		printf("%s\n", friend_list[i].gender);
+		printf("%s\n", friend_list[i].age);
+	}
+
+	printf("%s\n", info->descript);
+}
+
 int main(int argc, char* argv[])
 {
-    char id[255], name[255], gender[50], age[50], hp[50], mp[50], coin[50];
+	items* itemList = init_itemList();
+	friends* friend_list = init_friends();
+	Info* info = (Info*)malloc(sizeof(Info));
 
-    friends friend_list[100] = { 0 };
-    char* section;
-    char* crc;
-    int gender_i = 0;
+	char* section;
+	char* crc;
+	int gender_i = 0;
     int temp_len = 0;
     int item_count = 0, friend_count = 0, text_count = 1;
     char descript[1000];
     FILE* fp, * fp2; //파일 디스크립터, fp2는 수정용 임시 파일제작
 
-    char buf[600];
-    
-    if(argc != 3){
+    char buf[1000];
+	
+	if(argc != 3){
         printf("usage) %s sample_file encode_file\n", argv[0]);
         exit(1);
     }
@@ -157,81 +212,71 @@ int main(int argc, char* argv[])
         fprintf(stderr, "파일 오류\n");
         return 0;
     }
+    fgets(buf, sizeof(buf), fp);
+	fgets(buf, sizeof(buf), fp);
+    sscanf(buf, "ID: %s", info->id);
+	check_strlen("ID", info->id, 255);//id길이 예외
 
     fgets(buf, sizeof(buf), fp);
+    sscanf(buf, "NAME: %[^\n]", info->name);
+	check_strlen("NAME", info->name, 255);//이름 길이 예외
 
     fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "ID: %s", id);
-    if (strlen(id) > 255) {
-        printf("ID수가 255이상입니다.\n");
-        exit(1);
-    }
+    sscanf(buf, "GENDER: %s", info->gender);
     fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "NAME: %[^\n]", name);
-    if (strlen(name) > 255) {
-        printf("NAME수가 255이상입니다.\n");
-        exit(1);
-    }
+    sscanf(buf, "AGE: %s", info->age);
+	check_int("AGE", info->age, 99); // 나이 예외처리
+
     fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "GENDER: %s", gender);
+    sscanf(buf, "HP: %s", info->hp);
+	check_int("HP", info->hp, 255); // HP예외처리
+
     fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "AGE: %s", age);
-    if (atoi(age) < 0 || atoi(age) >99) {
-        printf("나이가 0~99이외의 값입니다.\n");
-        exit(1);
-    }
+    sscanf(buf, "MP: %s", info->mp);
+	check_int("MP", info->mp, 255); // MP예외처리
+
     fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "HP: %s", hp);
-    if (atoi(hp) < 0 || atoi(hp) >255) {
-        printf("HP가 0~255이외의 값입니다!!\n");
-        exit(1);
-    }
-    fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "MP: %s", mp);
-    if (atoi(mp) < 0 || atoi(mp) >255) {
-        printf("MP가 0~255이외의 값입니다!!\n");
-        exit(1);
-    }
-    fgets(buf, sizeof(buf), fp);
-    sscanf(buf, "COIN: %s", coin);
-    if (atoi(coin) < 0 || atoi(coin) >65535) {
-        printf("COIN이 0~65535 이외의 값입니다!!\n");
-        exit(1);
-    }
-    for (int k = 0; k < 3; k++)
+    sscanf(buf, "COIN: %s", info->coin);
+	check_int("COIN", info->coin, 65535);// COIN예외처리
+    
+	// text2파일에 쓰기(섹션1(본문))
+	for (int k = 0; k < 3; k++)
     {
-        temp_len = strlen(id);
+        temp_len = strlen(info->id);
         fwrite(&temp_len, 1, 1, fp2);
-        fwrite(&id, sizeof(char), strlen(id), fp2);
+        fwrite(&info->id, sizeof(char), strlen(info->id), fp2);
 
-        temp_len = strlen(name);
+        temp_len = strlen(info->name);
         fwrite(&temp_len, 1, 1, fp2);
-        fwrite(&name, sizeof(char), strlen(name), fp2);
+        fwrite(&info->name, sizeof(char), strlen(info->name), fp2);
 
-        if (gender == "MALE") gender_i = 0;
+        if (info->gender == "MALE") gender_i = 0;
         else gender_i = 100;
-        temp_len = atoi(age) + gender_i;
+        temp_len = atoi(info->age) + gender_i;
         fwrite(&temp_len, 1, 1, fp2);
 
-        temp_len = atoi(hp);
+        temp_len = atoi(info->hp);
         fwrite(&temp_len, 1, 1, fp2);
 
-        temp_len = atoi(mp);
+        temp_len = atoi(info->mp);
         fwrite(&temp_len, 1, 1, fp2);
 
-        temp_len = atoi(coin);
+        temp_len = atoi(info->coin);
         fwrite(&temp_len, 2, 1, fp2);
     }    
 
-    section = (char*)malloc(sizeof(char) * (strlen(id) + strlen(name) + 7));
-    sprintf(section, "%d%s%d%s%d%d%d%d", strlen(id), id, strlen(name), name, atoi(age) + gender_i, atoi(hp), atoi(mp), atoi(coin));
+	// text2파일에 쓰기(섹션1(CRC))
+    section = (char*)malloc(sizeof(char) * (strlen(info->id) + strlen(info->name) + 7));
+    sprintf(section, "%d%s%d%s%d%d%d%d", strlen(info->id), info->id, strlen(info->name), info->name, atoi(info->age) + gender_i, atoi(info->hp), atoi(info->mp), atoi(info->coin));
     crc = calculateCRC(section, strlen(section));
     fwrite(&crc, 2, 1, fp2);
     fwrite(&crc, 2, 1, fp2);
 
+	//섹션2
     fgets(buf, sizeof(buf), fp);
     fgets(buf, sizeof(buf), fp);
     int itemNum[6] = { 0 };
+	int item_count_test = 0;
     while (fgets(buf, sizeof(buf), fp))
     {
         if (buf[0] != '\n')
@@ -242,21 +287,20 @@ int main(int argc, char* argv[])
             item_count++;
             itemNum[item_count - 1] = changeItemNum(itemList, itemName);
             itemList[itemNum[item_count - 1]].cnt = atoi(itemcnt);
+
+			//아이템 갯수 예외
+			item_count_test += atoi(itemcnt);
+			if (item_count_test > 255) {
+				printf("item 갯수가 255개 초과입니다.\n");
+				exit(1);
+			}
         }
         else
         {
             break;
         }
     }
-    int item_count_test = 0;
-    for (int i = 0; i < 6; i++) {
-        item_count_test += itemList[i].cnt;
-    }
-    if (item_count_test > 255) {
-        printf("item 갯수가 255개 초과입니다.\n");
-        exit(1);
-    }
-
+    //text파일 쓰기(섹션2(본문))
     for (int k = 0; k < 3; k++) {
         fwrite(&item_count, 1, 1, fp2);
         for (int i = 0; i < item_count; i++) {
@@ -265,6 +309,7 @@ int main(int argc, char* argv[])
             fwrite(&temp_len, 1, 1, fp2);
         }
     }
+	//text2파일쓰기 (섹션2(CRC))
     section = (char*)malloc(sizeof(char) * 1 + (item_count * 2));
     sprintf(section, "%d", item_count);
     for (int i = 0; i < item_count; i++) {
@@ -274,9 +319,10 @@ int main(int argc, char* argv[])
     crc = calculateCRC(section, strlen(section));
     fwrite(&crc, 2, 1, fp2);
     fwrite(&crc, 2, 1, fp2);
-
+	
+	//세션 3
     fgets(buf, sizeof(buf), fp);
-
+	
     while (fgets(buf, sizeof(buf), fp))
     {
         if (buf[0] == 'F')
@@ -300,12 +346,9 @@ int main(int argc, char* argv[])
             break;
         }
     }
-        
-    if (friend_count > 100) {
-        printf("친구가 100명 초과 입니다.\n");
-        exit(1);
-    }
+	check_int2("친구", friend_count, 100);
 
+	//text2 파일쓰기 (섹션3(본문))
     for (int k = 0; k < 3; k++) {
         fwrite(&friend_count, 1, 1, fp2);
         for (int i = 0; i < friend_count; i++) {
@@ -325,6 +368,7 @@ int main(int argc, char* argv[])
         }
     }
     
+	//text2 파일쓰기 (섹션3(CRC))
     section = (char*)malloc(sizeof(char) * 1 + (friend_count * (sizeof(friend_list[0].id) + sizeof(friend_list[0].name) + 3)));
     sprintf(section, "%d", friend_count);
     for (int i = 0; i < friend_count; i++) {
@@ -336,8 +380,9 @@ int main(int argc, char* argv[])
     fwrite(&crc, 2, 1, fp2);
     fwrite(&crc, 2, 1, fp2);
         
+	//섹션4
     section = (char*)malloc(sizeof(char) * 1000);
-    strcpy(descript, "");
+    strcpy(info->descript, "");
     strcpy(section, "");
     while (fgets(buf, sizeof(buf), fp))
     {
@@ -352,15 +397,15 @@ int main(int argc, char* argv[])
                 {
                     if (text_count == 1)
                     {
-                        sprintf(descript, "%s%c", descript, buf[i]);
+                        sprintf(info->descript, "%s%c", info->descript, buf[i]);
                     }
                     else if (text_count == 2)
                     {
-                        sprintf(descript, "%s%c%c", descript, buf[i - 1], buf[i]);
+                        sprintf(info->descript, "%s%c%c", info->descript, buf[i - 1], buf[i]);
                         text_count = 1;
                     }
                     else {
-                        sprintf(descript, "%s*%c%c", descript, buf[i], text_count);
+                        sprintf(info->descript, "%s*%c%c", info->descript, buf[i], text_count);
                         text_count = 1;
                     }
                 }
@@ -372,16 +417,14 @@ int main(int argc, char* argv[])
             break;
         }
     }
-    if ((int)strlen(section) > 1000) {
-        printf("descript 길이가 1000자 초과입니다.\n");
-        exit(1);
-    }
-    unsigned short descript_len = strlen(descript);
+	check_strlen("DESCRIPTION", info->descript, 1000);//description 크기 예외
+	//text2 파일쓰기 (섹션3(본문))
+    unsigned short descript_len = strlen(info->descript);
     for (int k = 0; k < 3; k++) {
         fwrite(&descript_len, 1, 2, fp2);
-        fwrite(&descript, 1, strlen(descript), fp2);
+        fwrite(&info->descript, 1, strlen(info->descript), fp2);
     }
-    sprintf(section, "%d%s", descript_len, descript);
+    sprintf(section, "%d%s", descript_len, info->descript);
     crc = calculateCRC(section, strlen(section));
     fwrite(&crc, 2, 1, fp2);
     fwrite(&crc, 2, 1, fp2);
@@ -389,27 +432,13 @@ int main(int argc, char* argv[])
     fclose(fp);
     fclose(fp2);
 
-    printf("%s\n", id);
-    printf("%s\n", name);
-    printf("%s\n", gender);
-    printf("%s\n", age);
-    printf("%s\n", hp);
-    printf("%s\n", mp);
-    printf("%s\n", coin);
-
-    for (int i = 0; i < item_count; i++)
-        printf("%s %d\n", itemList[itemNum[i]].itemName, itemList[itemNum[i]].cnt);
-
-
-    for (int i = 0; i < friend_count; i++)
-    {
-        printf("%s\n", friend_list[i].id);
-        printf("%s\n", friend_list[i].name);
-        printf("%s\n", friend_list[i].gender);
-        printf("%s\n", friend_list[i].age);
-    }
-
-    printf("%s\n", descript);
+	printf("인코딩 된 데이터 확인.\n");
+	print_all(info, item_count, itemNum, itemList, friend_count, friend_list);
+	printf("인코딩 완료.\n");
+	
+	free(itemList);
+	free(friend_list);
+	free(info);
 
     return 0;
 }
