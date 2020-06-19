@@ -420,6 +420,9 @@ int main(int argc, char* argv[])
     fclose(fp2);
 
 	print_all(info, item_count, itemNum, itemList, friend_count, friend_list);
+	free(itemList);
+	free(friend_list);
+	free(info);
 
     return 0;
 }
