@@ -197,6 +197,11 @@ int main(int argc, char* argv[])
 
     char buf[600];
 	fp = file_open(argv[1], "r+b");
+	if (fp == NULL)
+	{ 
+            printf("파일 읽기 오류");
+            return -1;
+         }
     fp2 = file_open(argv[2], "w+b");
 
     fgets(buf, sizeof(buf), fp);
